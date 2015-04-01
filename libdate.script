@@ -1,0 +1,390 @@
+local sSystemMonthNames,sSystemWeekdayNames,sAbbreviatedSystemMonthNames,sAbbreviatedSystemWeekdayNames
+local sEnglishMonthNames,sEnglishWeekdayNames,sAbbreviatedEnglishMonthNames,sAbbreviatedEnglishWeekdayNames
+
+on libDate_reset
+   local tClear
+   put the localNames into tClear
+   repeat for each item theItem in tClear
+      if "Names" is in theItem then delete variable theItem
+   end repeat
+end libDate_reset
+
+function libDate_AbbrevEnglishWeekdayName pYear,pMonth,pDay
+   local tWeekday
+   put libDate_DayOfWeek(pYear,pMonth,pDay) + 1 into tWeekDay
+   return line tWeekDay of the abbrev english weekdaynames
+end libDate_AbbrevEnglishWeekdayName
+
+function libDate_AbbrevSystemWeekdayName pYear,pMonth,pDay
+   local tWeekday
+   put libDate_DayOfWeek(pYear,pMonth,pDay) + 1 into tWeekDay
+   return line tWeekDay of the abbrev system weekdaynames
+end libDate_AbbrevSystemWeekdayName
+
+function libDate_EnglishWeekdayName pYear,pMonth,pDay
+   local tWeekday
+   put libDate_DayOfWeek(pYear,pMonth,pDay) + 1 into tWeekDay
+   return line tWeekDay of the english weekdaynames
+end libDate_EnglishWeekdayName
+
+function libDate_SystemWeekdayName pYear,pMonth,pDay
+   local tWeekday
+   put libDate_DayOfWeek(pYear,pMonth,pDay) + 1 into tWeekDay
+   return line tWeekDay of the system weekdaynames
+end libDate_SystemWeekdayName
+
+function libDate_ShortSystemDate pYear,pMonth,pDay
+   local tDateFormatted
+   put the short system dateFormat into tDateFormatted
+   return replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
+end libDate_ShortSystemDate
+
+function libDate_LongSystemDate pYear,pMonth,pDay
+   local tDateFormatted
+   put the long system dateFormat into tDateFormatted
+   return replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
+end libDate_LongSystemDate
+
+function libDate_SystemDate pYear,pMonth,pDay
+   local tDateFormatted
+   put the system dateFormat into tDateFormatted
+   return replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
+end libDate_SystemDate
+
+function libDate_AbbrevSystemDate pYear,pMonth,pDay
+   local tDateFormatted
+   put the abbrev system dateFormat into tDateFormatted
+   return replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
+end libDate_AbbrevSystemDate
+
+function libDate_ShortEnglishDate pYear,pMonth,pDay
+   local tDateFormatted
+   put the short english dateFormat into tDateFormatted
+   return replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
+end libDate_ShortEnglishDate
+
+function libDate_LongEnglishDate pYear,pMonth,pDay
+   local tDateFormatted
+   put the long english dateFormat into tDateFormatted
+   return replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
+end libDate_LongEnglishDate
+
+function libDate_EnglishDate pYear,pMonth,pDay
+   local tDateFormatted
+   put the english dateFormat into tDateFormatted
+   return replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
+end libDate_EnglishDate
+
+function libDate_AbbrevEnglishDate pYear,pMonth,pDay
+   local tDateFormatted
+   put the abbrev english dateFormat into tDateFormatted
+   return replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
+end libDate_AbbrevEnglishDate
+
+function replaceFormatSystem pYear,pMonth,pDay,pDateFormatted
+   if sSystemMonthNames[1] is empty then
+      initSystemNames
+   end if
+   add 0 to pDay
+   add 0 to pMonth
+   add 0 to pYear
+   if pYear<100 then
+      -- current century
+      put char 1 to 2 of word -1 of the long  english date into pYear
+   end if
+   local tWeekDay,tDayWithTrailingZero,tMonthWithTrailingZero
+   set the caseSensitive to true
+   put libDate_dayOfWeek(pYear,pMonth,pDay)+1 into tWeekday
+   -- See dateformat in the dictionary
+   replace "%a" with sAbbreviatedSystemWeekdayNames[tWeekDay] in pDateFormatted
+   replace "%A" with sSystemWeekdayNames[tWeekDay] in pDateFormatted
+   replace "%b" with  sAbbreviatedSystemMonthNames[pMonth] in pDateFormatted
+   replace "%B" with sSystemMonthNames[pMonth] in pDateFormatted
+   replace "%d" with pDay in pDateFormatted
+   -- not documented, but possible
+   if pDay<10 then 
+      put "0"&pDay into tDayWithTrailingZero
+   else
+      put pDay into tDayWithTrailingZero
+   end if
+   replace "%#d" with tDayWithTrailingZero in pDateFormatted
+   replace "%m" with pMonth in pDateFormatted
+   -- not documented, seemingly NOT supported by the engine, but you never know
+   if pMonth<10 then 
+      put "0"&pMonth into tMonthWithTrailingZero
+   else
+      put pMonth into tMonthWithTrailingZero
+   end if
+   replace "%#m" with tMonthWithTrailingZero in pDateFormatted
+   replace "%y" with char -2 to -1 of pYear in pDateFormatted
+   replace "%Y" with pYear in pDateFormatted
+   replace "%#Y" with pYear in pDateFormatted
+   replace "%w" with tWeekday in pDateFormatted
+   return pDateFormatted
+end replaceFormatSystem
+
+function replaceFormatEnglish pYear,pMonth,pDay,pDateFormatted
+   if sEnglishMonthNames[1] is empty then
+      initEnglishNames
+   end if
+   add 0 to pDay
+   add 0 to pMonth
+   add 0 to pYear
+   if pYear<100 then
+      -- current century
+      put char 1 to 2 of word -1 of the long  english date into pYear
+   end if
+   local tWeekDay,tDayWithTrailingZero,tMonthWithTrailingZero
+   set the caseSensitive to true
+   put libDate_dayOfWeek(pYear,pMonth,pDay)+1 into tWeekday
+   -- See dateformat in the dictionary
+   replace "%a" with sAbbreviatedEnglishWeekdayNames[tWeekDay] in pDateFormatted
+   replace "%A" with sEnglishWeekdayNames[tWeekDay] in pDateFormatted
+   replace "%b" with  sAbbreviatedEnglishMonthNames[pMonth] in pDateFormatted
+   replace "%B" with sEnglishMonthNames[pMonth] in pDateFormatted
+   replace "%d" with pDay in pDateFormatted
+   -- not documented, but possible
+   if pDay<10 then 
+      put "0"&pDay into tDayWithTrailingZero
+   else
+      put pDay into tDayWithTrailingZero
+   end if
+   replace "%#d" with tDayWithTrailingZero in pDateFormatted
+   replace "%m" with pMonth in pDateFormatted
+   -- not documented, seemingly NOT supported by the engine, but you never know
+   if pMonth<10 then 
+      put "0"&pMonth into tMonthWithTrailingZero
+   else
+      put pMonth into tMonthWithTrailingZero
+   end if
+   replace "%#m" with tMonthWithTrailingZero in pDateFormatted
+   replace "%y" with char -2 to -1 of pYear in pDateFormatted
+   replace "%Y" with pYear in pDateFormatted
+   replace "%#Y" with pYear in pDateFormatted
+   replace "%w" with tWeekday in pDateFormatted
+   return pDateFormatted
+end replaceFormatEnglish
+
+function libDate_dayOfWeek pYear,pMonth,pDay
+   local tMonthNum,tDayNum,tYearNum,tCenturyNum,tCentury,tWeekDay,tYear
+   add 0 to pMonth
+   put pDay mod 7 into tDayNum
+   put 0 into tMonthNum[1]
+   put 3 into tMonthNum[2]
+   put 3 into tMonthNum[3]
+   put 6 into tMonthNum[4]
+   put 1 into tMonthNum[5]
+   put 4 into tMonthNum[6]
+   put 6 into tMonthNum[7]
+   put 2 into tMonthNum[8]
+   put 5 into tMonthNum[9]
+   put 0 into tMonthNum[10]
+   put 3 into tMonthNum[11]
+   put 5 into tMonthNum[12]
+   if pYear>99 then
+      put char -2 to -1 of pYear into tYear
+   end if
+   put (tYear +(tYear div 4)) mod 7 into tYearNum
+   if pYear<100 then
+      -- current century
+      put char 1 to 2 of word -1 of the long  english date into tCentury
+   else
+      if pYear>=1000 then
+         put char 1 to 2 of pYear into tCentury
+      else
+         put char 1 of pYear into tCentury
+      end if
+   end if
+   put (3 - (tCentury mod 4))*2 into tCenturyNum
+   put (tCenturyNum+tYearNum+tMonthNum[pMonth]+tDayNum) into tWeekDay
+   if libDate_isLeapYear(pYear) and pMonth <3 then add 6 to tWeekDay
+   put tWeekDay mod 7 into tWeekDay
+   return tWeekDay
+end libDate_dayOfWeek
+
+function libDate_isLeapYear pYear
+   if pYear<100 then
+      -- current century
+      put char 1 to 2 of word -1 of the long  english date before pYear
+   end if
+   if (pYear mod 400 = 0) or (pYear mod 100 <> 0) and (pYear mod 4 = 0) then
+      return true
+   else
+      return false
+   end if
+end libDate_isLeapYear
+
+on initSystemNames
+   -- just here to speed stuff up
+   local tCounter
+   
+   put 0 into tCounter
+   repeat for each line theLine in the system monthNames
+      add 1 to tCounter
+      put theLine into sSystemMonthNames[tCounter]
+   end repeat
+   
+   put 0 into tCounter
+   repeat for each line theLine in the abbreviated system monthNames
+      add 1 to tCounter
+      put theLine into sAbbreviatedSystemMonthNames[tCounter]
+   end repeat
+   
+   put 0 into tCounter
+   repeat for each line theLine in the system weekDayNames
+      add 1 to tCounter
+      put theLine into sSystemWeekdayNames[tCounter]
+   end repeat
+   
+   put 0 into tCounter
+   repeat for each line theLine in the abbreviated system weekDayNames
+      add 1 to tCounter
+      put theLine into sAbbreviatedSystemWeekdayNames[tCounter]
+   end repeat
+end initSystemNames
+
+on initEnglishNames
+   -- just here to speed stuff up
+   local tCounter
+   
+   put 0 into tCounter
+   repeat for each line theLine in the english monthNames
+      add 1 to tCounter
+      put theLine into sEnglishMonthNames[tCounter]
+   end repeat
+   
+   put 0 into tCounter
+   repeat for each line theLine in the abbreviated english monthNames
+      add 1 to tCounter
+      put theLine into sAbbreviatedEnglishMonthNames[tCounter]
+   end repeat
+   
+   put 0 into tCounter
+   repeat for each line theLine in the english weekDayNames
+      add 1 to tCounter
+      put theLine into sEnglishWeekdayNames[tCounter]
+   end repeat
+   
+   put 0 into tCounter
+   repeat for each line theLine in the abbreviated english weekDayNames
+      add 1 to tCounter
+      put theLine into sAbbreviatedEnglishWeekdayNames[tCounter]
+   end repeat
+end initEnglishNames
+
+function libDate_DaysInMonth pYear,pMonth
+   switch pMonth
+      case 4
+      case 6
+      case 9
+      case 11
+         return 30
+         break
+      case 2 
+         if libDate_isLeapYear(pYear) then
+            return 29
+         else
+            return 28
+         end if
+         break
+      default 
+         return 31
+         break
+   end switch
+end libDate_DaysInMonth
+
+function libDate_DayofYear pYear,pMonth,pDay
+   local tDayOfYear
+   repeat with i=1 to pMonth - 1
+      add libDate_DaysInMonth(pYear,i) to tDayOfYear
+   end repeat
+   add pDay to tDayOfYear
+   return tDayOfYear
+end libDate_DayofYear
+
+function libDate_CalendarWeekISO pYear,pMonth,pDay
+   local tWeek,tJan1St,tDaysPassed,tPrevious
+   put libDate_DayOfWeek(pYear,1,1) - 1  into tJan1St -- offset for monday = 0
+   if tJan1St<0 then put 6 into tJan1St
+   put libDate_DayOfYear(pYear,pMonth,pDay) - 1 into tDaysPassed
+   put 0 into tWeek
+   if tJan1St>3 then
+      put tDaysPassed - (7 - tJan1St) into tDaysPassed
+   else
+      put tDaysPassed+tJan1st into tDaysPassed
+   end if
+   if tDaysPassed < 0 then
+      put true into tPrevious
+      if libDate_DayOfWeek(pYear - 1,1,1)=4 then
+         put 53 into tWeek
+      else
+         put 52 into tWeek
+      end if
+   else
+      put tDayspassed div 7 + 1 into tWeek
+   end if
+   
+   if (tDayspassed > 360 and tWeek > 52) then
+      if tJan1St = 3 then
+         put 53 into tWeek
+      else
+         put 1 into tWeek
+      end if
+   end if
+   if not tPrevious then
+      return pYear &&"-" && tWeek
+   else
+      return pYear - 1 &&"-" && tWeek
+   end if
+end libDate_CalendarWeekISO
+
+function libDate_DaysOfCalendarWeekISO pYear,pWeek
+   local tJan4th,tFirstMonday,tMonday,tReturn
+   -- the 4th of January is ALWAYS in ISOWeek 1
+   -- need to find first monday in a year
+   put libDate_DayOfWeek(pYear,1,4) - 1  into tJan4th -- offset for monday = 0
+   if tJan4th<0 then put 6 into tJan4th
+   put libDate_DayNumber(pYear,1,4) into tFirstMonday
+   put tFirstMonday - tJan4th into tFirstMonday
+   put tFirstMonday + (pWeek - 1) * 7 into tMonday
+   repeat with i=0 to 6
+      put libDate_dateFromNumber(tMonday + i) & cr after tReturn
+   end repeat
+   delete char -1 of tReturn
+   return tReturn
+end libDate_DaysOfCalendarWeekISO
+
+function libDate_DaysBetween pYear1,pMonth1,pDay1,pYear2,pMonth2,pDay2
+   return libDate_DayNumber(pYear2,pMonth2,pDay2) - libDate_DayNumber(pYear1,pMonth1,pDay1)
+end libDate_DaysBetween
+
+function libDate_DateInDaysFrom pYear,pMonth,pDay,pDays
+   return libDate_dateFromNumber(libDate_DayNumber(pYear,pMonth,pDay)+pDays)
+end libDate_DateInDaysFrom
+
+-- taken from http://alcor.concordia.ca/~gpkatch/gdate-algorithm.html
+
+function libDate_DayNumber pYear,pMonth,pDay
+put  (pMonth + 9) mod 12 into pMonth
+put pYear - pMonth div 10 into pYear
+return 365*pYear + pYear div 4 - pYear div 100 + pYear div 400 + (pMonth*306 + 5) div 10 + ( pDay - 1 )
+end libDate_DayNumber
+
+function libDate_dateFromNumber pNumber
+   local tYear,tMonth,tDay,tDays,tMonths
+   put (10000*pNumber + 14780) div 3652425 into tYear
+   put pNumber - (365*tYear + tYear div 4 - tYear div 100 + tYear div 400) into tDays
+   if (tDays < 0) then
+      put tYear - 1 into tYear
+      put  pNumber - (365* tYear + tYear div 4 - tYear div 100 + tYear div 400) into tDays
+   end if
+   put  (100*tDays + 52) div 3060 into tMonths
+   put  (tMonths + 2) mod 12 + 1 into tMonth
+   put tYear + (tMonths + 2) div 12into tYear
+   put tDays - (tMonths*306 + 5) div 10 + 1 into tDay
+   return tYear, tMonth, tDay
+end libDate_dateFromNumber
+
+function libDate_DayOffset pYear,pMonth,pDay,pOffsetInDays
+   return libDate_DateFromNumber(libDate_DayNumber(pYear,pMonth,pDay+pOffsetInDays))
+end libDate_DayOffset
