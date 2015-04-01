@@ -1,6 +1,33 @@
 local sSystemMonthNames,sSystemWeekdayNames,sAbbreviatedSystemMonthNames,sAbbreviatedSystemWeekdayNames
 local sEnglishMonthNames,sEnglishWeekdayNames,sAbbreviatedEnglishMonthNames,sAbbreviatedEnglishWeekdayNames
 
+local slibDateMonthNames,slibDateAbbrevMonthNames,sLibDateWeekdayNames,sLibDateAbbrevWeekdayNames
+local sLibDateFormats,sLibDateLongFormats,sLibDateAbbrevFormats
+
+-- monthnames and weekdaynames for different languages
+on libDate_initNamesAndFormats
+   
+   -- Swedish
+   put "%Y-%m-%d" into sLibDateFormats["SE"]
+   put "den %#d %B %Y" into sLibDateLongFormats["SE"]
+   put "den %#d %b %Y" into sLibDateAbbrevFormats["SE"]
+   put "januari" & cr & "februari" & cr & "mars" & cr & "april" & cr & "maj" & cr & "juni" & cr & "juli" & cr &"augusti" & cr & "september" & cr & "oktober" & cr & "november" & cr & "december" into sLibDateMonthNames["SE"]
+   put "jan" & cr & "feb" & cr & "mar" & cr & "apr" & cr & "maj" & cr & "jun" & cr & "jul" & cr &"aug" & cr & "sep" & cr & "okt" & cr & "nov" & cr & "dec" into sLibDateAbbrevMonthNames["SE"]
+   put "söndag" & cr & "måndag" & cr & "tisdag" & cr & "onsdag" & cr & "torsdag" & cr & "fredag" & cr & "lördag" into sLibDateWeekdayNames["SE"]
+   put "sö" & cr & "må" & cr & "ti" & cr & "on" & cr & "to" & cr & "fr" & cr & "lö" into sLibDateAbbrevWeekdayNames["SE"]
+   
+   -- German
+   put "%d.%m.%y" into sLibDateFormats["DE"]
+   put "%A, %d. %B %Y" into sLibDateLongFormats["DE"]
+   put "%a, %d. %b %Y" into sLibDateAbbrevFormats["DE"]
+   put "Januar" & cr & "Februar" & cr & "März" & cr & "April" & cr & "Mai" & cr & "Juni" & cr & "Juli" & cr & "August" & cr & "September" & cr & "Oktober" & cr & "November" & cr & "Dezember" into sLibDateMonthNames["DE"]
+   put "Jan." & cr & "Feb." & cr & "Mär." & cr & "Apr." & cr & "Mai" & cr & "Juni" & cr & "Juli" & cr & "Aug." & cr & "Sep." & cr & "Okt." & cr & "Nov." & cr & "Dez." into sLibDateAbbrevMonthNames["DE"]
+   put "Sonntag" & cr & "Montag" & cr & "Dienstag" & cr & "Mittwoch" & cr & "Donnerstag" & cr & "Freitag" & cr & "Samstag" into sLibDateWeekdayNames["DE"]
+   put "So." & cr & "Mo." & cr & "Di." & cr & "Mi." & cr & "Do." & cr & "Fr." & cr & "Sa."  into sLibDateAbbrevWeekdayNames["DE"]
+   
+   
+end libDate_initNamesAndFormats
+
 on libDate_reset
    local tClear
    put the localNames into tClear
@@ -8,6 +35,13 @@ on libDate_reset
       if "Names" is in theItem then delete variable theItem
    end repeat
 end libDate_reset
+
+function libDate_SanityCheck pYear,pMonth,pDay
+   if pMonth<1 or pMonth>12 then return false
+   if pDay<1 then return false
+   if pDay > libDate_DaysInMonth(pYear,pMonth) then return false
+   return true
+end libDate_SanityCheck
 
 function libDate_AbbrevEnglishWeekdayName pYear,pMonth,pDay
    local tWeekday
@@ -33,64 +67,100 @@ function libDate_SystemWeekdayName pYear,pMonth,pDay
    return line tWeekDay of the system weekdaynames
 end libDate_SystemWeekdayName
 
-function libDate_ShortSystemDate pYear,pMonth,pDay
+function libDate_ShortSystemDate pYear,pMonth,pDay,pAddLeadingZeros
    local tDateFormatted
    put the short system dateFormat into tDateFormatted
-   return replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
+   if pAddLeadingZeros then
+      replace "%d" with "%#d" in tDateFormatted
+      replace "%m" with "%#m" in tDateFormatted
+      replace "%y" with "%Y" in tDateFormatted
+   end if
+   return libDate_replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
 end libDate_ShortSystemDate
 
-function libDate_LongSystemDate pYear,pMonth,pDay
+function libDate_LongSystemDate pYear,pMonth,pDay,pAddLeadingZeros
    local tDateFormatted
    put the long system dateFormat into tDateFormatted
-   return replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
+   if pAddLeadingZeros then
+      replace "%d" with "%#d" in tDateFormatted
+      replace "%m" with "%#m" in tDateFormatted
+      replace "%y" with "%Y" in tDateFormatted
+   end if
+   return libDate_replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
 end libDate_LongSystemDate
 
-function libDate_SystemDate pYear,pMonth,pDay
+function libDate_SystemDate pYear,pMonth,pDay,pAddLeadingZeros
    local tDateFormatted
+   if not libDate_SanityCheck(pYear,pMonth,pDay) then return "libDate error: invalid date."
    put the system dateFormat into tDateFormatted
-   return replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
+   if pAddLeadingZeros then
+      replace "%d" with "%#d" in tDateFormatted
+      replace "%m" with "%#m" in tDateFormatted
+      replace "%y" with "%Y" in tDateFormatted
+   end if
+   return libDate_replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
 end libDate_SystemDate
 
-function libDate_AbbrevSystemDate pYear,pMonth,pDay
+function libDate_AbbrevSystemDate pYear,pMonth,pDay,pAddLeadingZeros
    local tDateFormatted
    put the abbrev system dateFormat into tDateFormatted
-   return replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
+    if pAddLeadingZeros then
+      replace "%d" with "%#d" in tDateFormatted
+      replace "%m" with "%#m" in tDateFormatted
+      replace "%y" with "%Y" in tDateFormatted
+   end if
+   return libDate_replaceFormatSystem(pYear,pMonth,pDay,tDateFormatted)
 end libDate_AbbrevSystemDate
 
 function libDate_ShortEnglishDate pYear,pMonth,pDay
    local tDateFormatted
    put the short english dateFormat into tDateFormatted
-   return replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
+   return libDate_replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
 end libDate_ShortEnglishDate
 
-function libDate_LongEnglishDate pYear,pMonth,pDay
+function libDate_LongEnglishDate pYear,pMonth,pDay,pAddLeadingZeros
    local tDateFormatted
    put the long english dateFormat into tDateFormatted
-   return replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
+   if pAddLeadingZeros then
+      replace "%d" with "%#d" in tDateFormatted
+      replace "%m" with "%#m" in tDateFormatted
+      replace "%y" with "%Y" in tDateFormatted
+   end if
+   return libDate_replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
 end libDate_LongEnglishDate
 
-function libDate_EnglishDate pYear,pMonth,pDay
+function libDate_EnglishDate pYear,pMonth,pDay,pAddLeadingZeros
    local tDateFormatted
    put the english dateFormat into tDateFormatted
-   return replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
+   if pAddLeadingZeros then
+      replace "%d" with "%#d" in tDateFormatted
+      replace "%m" with "%#m" in tDateFormatted
+      replace "%y" with "%Y" in tDateFormatted
+   end if
+   return libDate_replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
 end libDate_EnglishDate
 
-function libDate_AbbrevEnglishDate pYear,pMonth,pDay
+function libDate_AbbrevEnglishDate pYear,pMonth,pDay,pAddLeadingZeros
    local tDateFormatted
    put the abbrev english dateFormat into tDateFormatted
-   return replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
+   if pAddLeadingZeros then
+      replace "%d" with "%#d" in tDateFormatted
+      replace "%m" with "%#m" in tDateFormatted
+      replace "%y" with "%Y" in tDateFormatted
+   end if
+   return libDate_replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
 end libDate_AbbrevEnglishDate
 
-function replaceFormatSystem pYear,pMonth,pDay,pDateFormatted
+function libDate_replaceFormatSystem pYear,pMonth,pDay,pDateFormatted
    if sSystemMonthNames[1] is empty then
-      initSystemNames
+      libDate_initSystemNames
    end if
    add 0 to pDay
    add 0 to pMonth
    add 0 to pYear
    if pYear<100 then
       -- current century
-      put char 1 to 2 of word -1 of the long  english date into pYear
+      put char 1 to 2 of word -1 of the long  english date before pYear
    end if
    local tWeekDay,tDayWithTrailingZero,tMonthWithTrailingZero
    set the caseSensitive to true
@@ -121,49 +191,200 @@ function replaceFormatSystem pYear,pMonth,pDay,pDateFormatted
    replace "%#Y" with pYear in pDateFormatted
    replace "%w" with tWeekday in pDateFormatted
    return pDateFormatted
-end replaceFormatSystem
+end libDate_replaceFormatSystem
 
-function replaceFormatEnglish pYear,pMonth,pDay,pDateFormatted
+function libDate_replaceFormatEnglish
+   local tParams
+   local tYear,tMonth,tDay,tDateformat
+   repeat with i=1 to paramCount()
+      put param(i)&"," after tParams
+   end repeat
+   put item 1 of tParams into tYear
+   put item 2 of tParams into tMonth
+   put item 3 of tParams into tDay
+   put item 4 to -1 of tParams into tDateformat
+   
    if sEnglishMonthNames[1] is empty then
-      initEnglishNames
+      libDate_initEnglishNames
+   end if
+   add 0 to tDay
+   add 0 to tMonth
+   add 0 to tYear
+   if tYear<100 then
+      -- current century
+      put char 1 to 2 of word -1 of the long  english date before tYear
+   end if
+   local tWeekDay,tDayWithTrailingZero,tMonthWithTrailingZero
+   set the caseSensitive to true
+   put libDate_dayOfWeek(tYear,tMonth,tDay)+1 into tWeekday
+   -- See dateformat in the dictionary
+   replace "%a" with sAbbreviatedEnglishWeekdayNames[tWeekDay] in tDateformat
+   replace "%A" with sEnglishWeekdayNames[tWeekDay] in tDateformat
+   replace "%b" with  sAbbreviatedEnglishMonthNames[tMonth] in tDateformat
+   replace "%B" with sEnglishMonthNames[tMonth] in tDateformat
+   replace "%d" with tDay in tDateformat
+   -- not documented, but possible
+   if tDay<10 then 
+      put "0"&tDay into tDayWithTrailingZero
+   else
+      put tDay into tDayWithTrailingZero
+   end if
+   replace "%#d" with tDayWithTrailingZero in tDateformat
+   replace "%m" with tMonth in tDateformat
+   -- not documented, seemingly NOT supported by the engine, but you never know
+   if tMonth<10 then 
+      put "0"&tMonth into tMonthWithTrailingZero
+   else
+      put tMonth into tMonthWithTrailingZero
+   end if
+   replace "%#m" with tMonthWithTrailingZero in tDateformat
+   replace "%y" with char -2 to -1 of tYear in tDateformat
+   replace "%Y" with tYear in tDateformat
+   replace "%#Y" with tYear in tDateformat
+   replace "%w" with tWeekday in tDateformat
+   return tDateformat
+end libDate_replaceFormatEnglish
+
+function libDate_LongFormat pYear,pMonth,pDay,pLanguage
+   local tReplace
+   if sLibdateMonthNames[pLanguage] is empty then
+      libDate_initNamesAndFormats
+   end if
+   if sLibdateMonthNames[pLanguage] is empty then
+      return "libDateError: Unknown language"
    end if
    add 0 to pDay
    add 0 to pMonth
    add 0 to pYear
    if pYear<100 then
       -- current century
-      put char 1 to 2 of word -1 of the long  english date into pYear
+      put char 1 to 2 of word -1 of the long  english date before pYear
    end if
+   put sLibDateLongFormats[pLanguage] into tReplace
    local tWeekDay,tDayWithTrailingZero,tMonthWithTrailingZero
    set the caseSensitive to true
    put libDate_dayOfWeek(pYear,pMonth,pDay)+1 into tWeekday
    -- See dateformat in the dictionary
-   replace "%a" with sAbbreviatedEnglishWeekdayNames[tWeekDay] in pDateFormatted
-   replace "%A" with sEnglishWeekdayNames[tWeekDay] in pDateFormatted
-   replace "%b" with  sAbbreviatedEnglishMonthNames[pMonth] in pDateFormatted
-   replace "%B" with sEnglishMonthNames[pMonth] in pDateFormatted
-   replace "%d" with pDay in pDateFormatted
+   replace "%a" with line tWeekDay of sLibDateAbbrevWeekdayNames[pLanguage] in tReplace
+   replace "%A" with line tWeekDay of sLibDateAbbrevWeekdayNames[pLanguage] in tReplace
+   replace "%b" with line pMonth of sLibDateAbbrevMonthNames[pLanguage] in tReplace
+   replace "%B" with line pMonth of sLibDateMonthNames[pLanguage] in tReplace
+   replace "%d" with pDay in tReplace
    -- not documented, but possible
    if pDay<10 then 
       put "0"&pDay into tDayWithTrailingZero
    else
-      put pDay into tDayWithTrailingZero
+      put pDay into tDayWithTrailingZero 
    end if
-   replace "%#d" with tDayWithTrailingZero in pDateFormatted
-   replace "%m" with pMonth in pDateFormatted
+   replace "%#d" with tDayWithTrailingZero in tReplace
+   replace "%m" with pMonth in tReplace
    -- not documented, seemingly NOT supported by the engine, but you never know
    if pMonth<10 then 
       put "0"&pMonth into tMonthWithTrailingZero
    else
       put pMonth into tMonthWithTrailingZero
    end if
-   replace "%#m" with tMonthWithTrailingZero in pDateFormatted
-   replace "%y" with char -2 to -1 of pYear in pDateFormatted
-   replace "%Y" with pYear in pDateFormatted
-   replace "%#Y" with pYear in pDateFormatted
-   replace "%w" with tWeekday in pDateFormatted
-   return pDateFormatted
-end replaceFormatEnglish
+   replace "%#m" with tMonthWithTrailingZero in tReplace
+   replace "%y" with char -2 to -1 of pYear in tReplace
+   replace "%Y" with pYear in tReplace
+   replace "%#Y" with pYear in tReplace
+   replace "%w" with tWeekday in tReplace
+   return tReplace
+end libDate_LongFormat
+
+function libDate_AbbrevFormat pYear,pMonth,pDay,pLanguage
+   local tReplace
+   if sLibdateMonthNames[pLanguage] is empty then
+      libDate_initNamesAndFormats
+   end if
+   if sLibdateMonthNames[pLanguage] is empty then
+      return "libDateError: Unknown language"
+   end if
+   add 0 to pDay
+   add 0 to pMonth
+   add 0 to pYear
+   if pYear<100 then
+      -- current century
+      put char 1 to 2 of word -1 of the long  english date before pYear
+   end if
+   put sLibDateAbbrevFormats[pLanguage] into tReplace
+   local tWeekDay,tDayWithTrailingZero,tMonthWithTrailingZero
+   set the caseSensitive to true
+   put libDate_dayOfWeek(pYear,pMonth,pDay)+1 into tWeekday
+   -- See dateformat in the dictionary
+   replace "%a" with line tWeekDay of sLibDateAbbrevWeekdayNames[pLanguage] in tReplace
+   replace "%A" with line tWeekDay of sLibDateAbbrevWeekdayNames[pLanguage] in tReplace
+   replace "%b" with line pMonth of sLibDateAbbrevMonthNames[pLanguage] in tReplace
+   replace "%B" with line pMonth of sLibDateMonthNames[pLanguage] in tReplace
+   replace "%d" with pDay in tReplace
+   -- not documented, but possible
+   if pDay<10 then 
+      put "0"&pDay into tDayWithTrailingZero
+   else
+      put pDay into tDayWithTrailingZero 
+   end if
+   replace "%#d" with tDayWithTrailingZero in tReplace
+   replace "%m" with pMonth in tReplace
+   -- not documented, seemingly NOT supported by the engine, but you never know
+   if pMonth<10 then 
+      put "0"&pMonth into tMonthWithTrailingZero
+   else
+      put pMonth into tMonthWithTrailingZero
+   end if
+   replace "%#m" with tMonthWithTrailingZero in tReplace
+   replace "%y" with char -2 to -1 of pYear in tReplace
+   replace "%Y" with pYear in tReplace
+   replace "%#Y" with pYear in tReplace
+   replace "%w" with tWeekday in tReplace
+   return tReplace
+end libDate_AbbrevFormat
+
+function libDate_shortFormat pYear,pMonth,pDay,pLanguage
+   local tReplace
+   if sLibdateMonthNames[pLanguage] is empty then
+      libDate_initNamesAndFormats
+   end if
+   if sLibdateMonthNames[pLanguage] is empty then
+      return "libDateError: Unknown language"
+   end if
+   add 0 to pDay
+   add 0 to pMonth
+   add 0 to pYear
+   if pYear<100 then
+      -- current century
+      put char 1 to 2 of word -1 of the long  english date before pYear
+   end if
+   put sLibDateFormats[pLanguage] into tReplace
+   local tWeekDay,tDayWithTrailingZero,tMonthWithTrailingZero
+   set the caseSensitive to true
+   put libDate_dayOfWeek(pYear,pMonth,pDay)+1 into tWeekday
+   -- See dateformat in the dictionary
+   replace "%a" with line tWeekDay of sLibDateAbbrevWeekdayNames[pLanguage] in tReplace
+   replace "%A" with line tWeekDay of sLibDateAbbrevWeekdayNames[pLanguage] in tReplace
+   replace "%b" with line pMonth of sLibDateAbbrevMonthNames[pLanguage] in tReplace
+   replace "%B" with line pMonth of sLibDateMonthNames[pLanguage] in tReplace
+   replace "%d" with pDay in tReplace
+   -- not documented, but possible
+   if pDay<10 then 
+      put "0"&pDay into tDayWithTrailingZero
+   else
+      put pDay into tDayWithTrailingZero 
+   end if
+   replace "%#d" with tDayWithTrailingZero in tReplace
+   replace "%m" with pMonth in tReplace
+   -- not documented, seemingly NOT supported by the engine, but you never know
+   if pMonth<10 then 
+      put "0"&pMonth into tMonthWithTrailingZero
+   else
+      put pMonth into tMonthWithTrailingZero
+   end if
+   replace "%#m" with tMonthWithTrailingZero in tReplace
+   replace "%y" with char -2 to -1 of pYear in tReplace
+   replace "%Y" with pYear in tReplace
+   replace "%#Y" with pYear in tReplace
+   replace "%w" with tWeekday in tReplace
+   return tReplace
+end libDate_shortFormat
 
 function libDate_dayOfWeek pYear,pMonth,pDay
    local tMonthNum,tDayNum,tYearNum,tCenturyNum,tCentury,tWeekDay,tYear
@@ -214,7 +435,7 @@ function libDate_isLeapYear pYear
    end if
 end libDate_isLeapYear
 
-on initSystemNames
+on libDate_initSystemNames
    -- just here to speed stuff up
    local tCounter
    
@@ -241,9 +462,9 @@ on initSystemNames
       add 1 to tCounter
       put theLine into sAbbreviatedSystemWeekdayNames[tCounter]
    end repeat
-end initSystemNames
+end libDate_initSystemNames
 
-on initEnglishNames
+on libDate_initEnglishNames
    -- just here to speed stuff up
    local tCounter
    
@@ -270,7 +491,7 @@ on initEnglishNames
       add 1 to tCounter
       put theLine into sAbbreviatedEnglishWeekdayNames[tCounter]
    end repeat
-end initEnglishNames
+end libDate_initEnglishNames
 
 function libDate_DaysInMonth pYear,pMonth
    switch pMonth
@@ -388,3 +609,128 @@ end libDate_dateFromNumber
 function libDate_DayOffset pYear,pMonth,pDay,pOffsetInDays
    return libDate_DateFromNumber(libDate_DayNumber(pYear,pMonth,pDay+pOffsetInDays))
 end libDate_DayOffset
+
+function libDate_dateFromFormat pFormatString,pFormattedString
+   local tTokens,tYear,tMonth,tDay
+   put libDate_findTokens(pFormatString,pFormattedString) into tTokens
+   repeat for each key theToken in tTokens
+      switch tTokens[theToken]["token"]
+         case "%y"
+            put tTokens[theToken]["value"] into tYear
+            if the number of chars of tYear <3 then 
+               put char 1 to 2 of word -1 of the long english date before tYear
+            end if
+            break
+         case "%m"
+         case "%#m"
+            put tTokens[theToken]["value"] into tMonth
+            break
+         case "%d"
+         case "%#d"
+            put tTokens[theToken]["value"] into tDay
+            break
+         case "%b"
+            -- parser needs to be forgiving, thus check everything
+            put lineOffset(tTokens[theToken]["value"],the system monthnames) into tMonth
+            if tMonth = 0 then
+               put lineOffset(tTokens[theToken]["value"],the monthnames) into tMonth
+            end if
+            if tMonth = 0 then
+               put lineOffset(tTokens[theToken]["value"],the abbrev system monthnames) into tMonth
+            end if
+            if tMonth= 0 then
+               put lineOffset(tTokens[theToken]["value"],the abbrev monthnames) into tMonth
+            end if
+            if tMonth = 0 then
+               repeat for each key theKey in sLibDateMonthNames
+                  put lineOffset(tTokens[theToken]["value"],sLibDateMonthNames[theKey]) into tMonth
+                  if tMonth <> 0  then 
+                     exit repeat
+                  end if
+               end repeat
+            end if
+            if tMonth= 0  then
+               put "Monthname is ambiguous" into tMonth
+            end if
+            if the number of chars of tMonth < 2 then put 0 before tMonth
+            break
+      end switch
+   end repeat
+   return tYear,tMonth,tDay
+end libDate_dateFromFormat
+
+function libDate_findTokens pString,pString2
+   
+   local tOffsets,tCounter,tToken,tTokens,tSort,tResult
+   
+   repeat for each char theChar in pString
+      add 1 to tCounter
+      if theChar="%" then
+         add 1 to tToken
+         if tOffsets is empty then
+            put tCounter into tOffsets
+         else
+            put cr & tCounter after tOffsets
+         end if
+         if char tCounter + 1 of pString ="#" then
+            put "," & tCounter +2 after tOffsets
+            put char tCounter to tCounter + 2 of pString into tTokens[tToken]["token"]
+            put tCounter & "," & tCounter +2 into tTokens[tToken]["offset"]
+         else
+            put "," & tCounter +1 after tOffsets
+            put char tCounter to tCounter + 1 of pString into tTokens[tToken]["token"]
+            put tCounter & "," & tCounter +1 into tTokens[tToken]["offset"]
+         end if
+         if tToken > 1 then
+            put char (item 2 of tTokens[tToken-1]["offset"]) + 1 to (item 1 of tTokens[tToken]["offset"]) -1 of pString into tTokens[tToken-1]["delimiter"]
+         end if
+      end if
+   end repeat
+   
+   -- garbage collection at the end
+   put the number of lines of the keys of tTokens into tCounter
+   if tCounter >1 then
+      put char (item 2 of tTokens[tCounter]["offset"]) +1 to -1 of pString into tTokens[tCounter]["delimiter"]
+   end if
+   
+   put the keys of tTokens into tSort
+   sort tSort ascending numeric
+   repeat for each line theToken in tSort
+      if tTokens[theToken]["delimiter"] is not empty then
+         repeat with i=1 to the number of chars of pString2
+            --put char i to i + (the number of chars of tTokens[theToken]["delimiter"] -1) of pString2 & cr after msg
+            if char i to i + (the number of chars of tTokens[theToken]["delimiter"] -1) of pString2 = tTokens[theToken]["delimiter"] then
+               --answer char 1 to i-1 of pString2 && theToken&cr&pString2
+               put char 1 to i-1 of pString2 into tTokens[theToken]["value"]
+               delete char 1 to i+the number of chars of tTokens[theToken]["delimiter"] -1 of pString2
+               exit repeat
+            end if
+         end repeat
+      else
+         if theToken = line (the number of lines of tSort) of tSort then
+            put pString2 into tTokens[theToken]["value"]
+         else
+            -- uuuuuhhh this is getting ugly
+            
+         end if
+      end if
+   end repeat
+   return tTokens
+end libDate_findTokens
+
+
+-- contribution by Mats Wilstrand
+
+function libDate_today
+   local tDate
+   put the english date into tDate
+   replace slash with comma in tDate
+   put word -1 of the long english date & comma & item 1 of tDate & comma & item 2 of tDate into tDate
+   if the number of chars of item 2 of tDate = 1 then put 0 before item 2 of tDate
+   if the number of chars of item 3 of tDate = 1 then put 0 before item 3 of tDate
+   return tDate
+end libDate_Today
+
+-- end Mats
+
+
