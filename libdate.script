@@ -25,6 +25,14 @@ on libDate_initNamesAndFormats
    put "Sonntag" & cr & "Montag" & cr & "Dienstag" & cr & "Mittwoch" & cr & "Donnerstag" & cr & "Freitag" & cr & "Samstag" into sLibDateWeekdayNames["DE"]
    put "So." & cr & "Mo." & cr & "Di." & cr & "Mi." & cr & "Do." & cr & "Fr." & cr & "Sa."  into sLibDateAbbrevWeekdayNames["DE"]
    
+   -- Italian
+   put "%d.%m.%y" into sLibDateFormats["IT"]
+   put "%A, %d %B %Y" into sLibDateLongFormats["IT"]
+   put "%a, %d/%b/%Y" into sLibDateAbbrevFormats["IT"]
+   put "Gennaio" & cr & "Febbraio" & cr & "Marzo" & cr & "Aprile" & cr & "Maggio" & cr & "Giugno" & cr & "Luglio" & cr & "Agosto" & cr & "Settembre" & cr & "Ottobre" & cr & "Novembre" & cr & "Dicembre" into sLibDateMonthNames["IT"]
+   put "Gen." & cr & "Feb." & cr & "Mar." & cr & "Apr." & cr & "Mag." & cr & "Giu." & cr & "Lug." & cr & "Ago." & cr & "Set." & cr & "Ott." & cr & "Nov." & cr & "Dic." into sLibDateAbbrevMonthNames["IT"]
+   put "Domenica" & cr & "Lunedì" & cr & "Martedì" & cr & "Mercoledì" & cr & "Giovedì" & cr & "Venerdì" & cr & "Sabato" into sLibDateWeekdayNames["IT"]
+   put "Dom." & cr & "Lun." & cr & "Mar." & cr & "Mer." & cr & "Gio." & cr & "Ven." & cr & "Sab."  into sLibDateAbbrevWeekdayNames["IT"]
    
 end libDate_initNamesAndFormats
 
