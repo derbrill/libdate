@@ -3,11 +3,42 @@ local sEnglishMonthNames,sEnglishWeekdayNames,sAbbreviatedEnglishMonthNames,sAbb
 
 local slibDateMonthNames,slibDateAbbrevMonthNames,sLibDateWeekdayNames,sLibDateAbbrevWeekdayNames
 local sLibDateFormats,sLibDateLongFormats,sLibDateAbbrevFormats
+local sLibDateLanguages
+
+--Get list of all languages avaliable
+function libDate_listlangs
+   libDate_initNamesAndFormats #initialise names
+   put sLibDateLanguages into temp
+   combine temp using CR and comma
+   return temp
+end libDate_listlangs
 
 -- monthnames and weekdaynames for different languages
 on libDate_initNamesAndFormats
    
+   --USA
+   put "American" into sLibDateLanguages["USA"]   
+   put "%m/%d/%y" into sLibDateFormats["USA"]
+   put "%A, %B %d, %Y" into sLibDateLongFormats["USA"]
+   put "%a, %d. %b %Y" into sLibDateAbbrevFormats["USA"]
+   put "Jannuary" & cr & "February" & cr & "March" & cr & "April" & cr & "May" & cr & "June" & cr & "July" & cr & "August" & cr & "September" & cr & "October" & cr & "November" & cr & "Dicember" into sLibDateMonthNames["USA"]
+   put "Jan." & cr & "Feb." & cr & "Mar." & cr & "Apr." & cr & "May" & cr & "Jun." & cr & "Jul." & cr & "Aug." & cr & "Sep." & cr & "Oct." & cr & "Nov." & cr & "Dic." into sLibDateAbbrevMonthNames["USA"]
+   put "Sunday" & cr & "Monday" & cr & "Tuesday" & cr & "Wednesday" & cr & "Thursday" & cr & "Friday" & cr & "Saturday" into sLibDateWeekdayNames["USA"]
+   put "Sun." & cr & "Mon." & cr & "Tue." & cr & "Wed." & cr & "Thu." & cr & "Fri." & cr & "Sat."  into sLibDateAbbrevWeekdayNames["USA"]
+   
+   
+   --English
+   put "English" into sLibDateLanguages["EN"]   
+   put "%d/%m/%y" into sLibDateFormats["EN"]
+   put "%A, %B %d, %Y" into sLibDateLongFormats["EN"]
+   put "%a, %d. %b %Y" into sLibDateAbbrevFormats["EN"]
+   put "Jannuary" & cr & "February" & cr & "March" & cr & "April" & cr & "May" & cr & "June" & cr & "July" & cr & "August" & cr & "September" & cr & "October" & cr & "November" & cr & "Dicember" into sLibDateMonthNames["EN"]
+   put "Jan." & cr & "Feb." & cr & "Mar." & cr & "Apr." & cr & "May" & cr & "Jun." & cr & "Jul." & cr & "Aug." & cr & "Sep." & cr & "Oct." & cr & "Nov." & cr & "Dic." into sLibDateAbbrevMonthNames["EN"]
+   put "Sunday" & cr & "Monday" & cr & "Tuesday" & cr & "Wednesday" & cr & "Thursday" & cr & "Friday" & cr & "Saturday" into sLibDateWeekdayNames["EN"]
+   put "Sun." & cr & "Mon." & cr & "Tue." & cr & "Wed." & cr & "Thu." & cr & "Fri." & cr & "Sat."  into sLibDateAbbrevWeekdayNames["EN"]
+   
    -- Swedish
+   put "Swedish" into sLibDateLanguages["SE"]
    put "%Y-%m-%d" into sLibDateFormats["SE"]
    put "den %#d %B %Y" into sLibDateLongFormats["SE"]
    put "den %#d %b %Y" into sLibDateAbbrevFormats["SE"]
@@ -17,6 +48,7 @@ on libDate_initNamesAndFormats
    put "sö" & cr & "må" & cr & "ti" & cr & "on" & cr & "to" & cr & "fr" & cr & "lö" into sLibDateAbbrevWeekdayNames["SE"]
    
    -- German
+   put "Deutsch" into sLibDateLanguages["DE"]
    put "%d.%m.%y" into sLibDateFormats["DE"]
    put "%A, %d. %B %Y" into sLibDateLongFormats["DE"]
    put "%a, %d. %b %Y" into sLibDateAbbrevFormats["DE"]
@@ -26,6 +58,7 @@ on libDate_initNamesAndFormats
    put "So." & cr & "Mo." & cr & "Di." & cr & "Mi." & cr & "Do." & cr & "Fr." & cr & "Sa."  into sLibDateAbbrevWeekdayNames["DE"]
    
    -- Italian
+   put "Italiano" into sLibDateLanguages["IT"]
    put "%d.%m.%y" into sLibDateFormats["IT"]
    put "%A, %d %B %Y" into sLibDateLongFormats["IT"]
    put "%a, %d/%b/%Y" into sLibDateAbbrevFormats["IT"]
