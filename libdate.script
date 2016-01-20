@@ -776,4 +776,9 @@ end libDate_Today
 
 -- end Mats
 
-
+function libDate_dateFromSeconds  tSeconds
+   #return date from the seconds (UNIX timestamp)
+   put  floor(((tSeconds / 60) / 60 ) / 24) into tDays #days from 1970/1/1   
+   put libDate_DayNumber(1970,1,1) + tDays into tDays   
+   return libDate_dateFromNumber(tDays)   
+end libDate_dateFromSeconds
