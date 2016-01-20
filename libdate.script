@@ -627,12 +627,14 @@ end libDate_DateInDaysFrom
 -- taken from http://alcor.concordia.ca/~gpkatch/gdate-algorithm.html
 
 function libDate_DayNumber pYear,pMonth,pDay
-put  (pMonth + 9) mod 12 into pMonth
-put pYear - pMonth div 10 into pYear
-return 365*pYear + pYear div 4 - pYear div 100 + pYear div 400 + (pMonth*306 + 5) div 10 + ( pDay - 1 )
+ #return number of days counting from year 0 AC/DC, useful for difference od days calculations
+ put  (pMonth + 9) mod 12 into pMonth
+ put pYear - pMonth div 10 into pYear
+ return 365*pYear + pYear div 4 - pYear div 100 + pYear div 400 + (pMonth*306 + 5) div 10 + ( pDay - 1 )
 end libDate_DayNumber
 
 function libDate_dateFromNumber pNumber
+   #return date from day number starting from 0 year AC/DC
    local tYear,tMonth,tDay,tDays,tMonths
    put (10000*pNumber + 14780) div 3652425 into tYear
    put pNumber - (365*tYear + tYear div 4 - tYear div 100 + tYear div 400) into tDays
