@@ -15,7 +15,7 @@ end libDate_listlangs
 
 -- monthnames and weekdaynames for different languages
 on libDate_initNamesAndFormats
-   
+   #put here your language format
    --USA
    put "American" into sLibDateLanguages["USA"]   
    put "%m/%d/%y" into sLibDateFormats["USA"]
@@ -70,6 +70,7 @@ on libDate_initNamesAndFormats
 end libDate_initNamesAndFormats
 
 on libDate_reset
+   #reset lenguage and format
    local tClear
    put the localNames into tClear
    repeat for each item theItem in tClear
@@ -78,6 +79,7 @@ on libDate_reset
 end libDate_reset
 
 function libDate_SanityCheck pYear,pMonth,pDay
+   #returns true if the supplied date is a valid date
    if pMonth<1 or pMonth>12 then return false
    if pDay<1 then return false
    if pDay > libDate_DaysInMonth(pYear,pMonth) then return false
@@ -85,30 +87,42 @@ function libDate_SanityCheck pYear,pMonth,pDay
 end libDate_SanityCheck
 
 function libDate_AbbrevEnglishWeekdayName pYear,pMonth,pDay
+   #returns "Sat"
    local tWeekday
    put libDate_DayOfWeek(pYear,pMonth,pDay) + 1 into tWeekDay
    return line tWeekDay of the abbrev english weekdaynames
 end libDate_AbbrevEnglishWeekdayName
 
 function libDate_AbbrevSystemWeekdayName pYear,pMonth,pDay
+   #depens on your system and language
+   #libDate_AbbrevSystemWeekdayName(2012,12,10)  = "mon"
    local tWeekday
    put libDate_DayOfWeek(pYear,pMonth,pDay) + 1 into tWeekDay
    return line tWeekDay of the abbrev system weekdaynames
 end libDate_AbbrevSystemWeekdayName
 
 function libDate_EnglishWeekdayName pYear,pMonth,pDay
+   #returns the egnlish name of the supplied date
+   #example:
+   #libDate_EnglishWeekdayName(2012,12,25) = "Tuesday"
    local tWeekday
    put libDate_DayOfWeek(pYear,pMonth,pDay) + 1 into tWeekDay
    return line tWeekDay of the english weekdaynames
 end libDate_EnglishWeekdayName
 
 function libDate_SystemWeekdayName pYear,pMonth,pDay
+   #depends on your system
+   #example on windows italian:
+   # libDate_SystemWeekdayName(2015,12,25) = "venerdì"
    local tWeekday
    put libDate_DayOfWeek(pYear,pMonth,pDay) + 1 into tWeekDay
    return line tWeekDay of the system weekdaynames
 end libDate_SystemWeekdayName
 
 function libDate_ShortSystemDate pYear,pMonth,pDay,pAddLeadingZeros
+   #depends on system
+   #example:
+   # libDate_ShortSystemDate(2015,12,25) = "25/12/2015"
    local tDateFormatted
    put the short system dateFormat into tDateFormatted
    if pAddLeadingZeros then
@@ -120,6 +134,9 @@ function libDate_ShortSystemDate pYear,pMonth,pDay,pAddLeadingZeros
 end libDate_ShortSystemDate
 
 function libDate_LongSystemDate pYear,pMonth,pDay,pAddLeadingZeros
+   #depending on system/language
+   #example:
+   # libDate_LongSystemDate(2013,12,1) = "domenica 01 dicembre 2013"
    local tDateFormatted
    put the long system dateFormat into tDateFormatted
    if pAddLeadingZeros then
@@ -131,6 +148,9 @@ function libDate_LongSystemDate pYear,pMonth,pDay,pAddLeadingZeros
 end libDate_LongSystemDate
 
 function libDate_SystemDate pYear,pMonth,pDay,pAddLeadingZeros
+   #depends on your system
+   #example:
+   # libDate_SystemDate(2015,12,25) = "25/12/15"
    local tDateFormatted
    if not libDate_SanityCheck(pYear,pMonth,pDay) then return "libDate error: invalid date."
    put the system dateFormat into tDateFormatted
@@ -143,6 +163,8 @@ function libDate_SystemDate pYear,pMonth,pDay,pAddLeadingZeros
 end libDate_SystemDate
 
 function libDate_AbbrevSystemDate pYear,pMonth,pDay,pAddLeadingZeros
+   #depending on your system and language
+   #on windows italian returns:  "mer 12 dic 2012"
    local tDateFormatted
    put the abbrev system dateFormat into tDateFormatted
     if pAddLeadingZeros then
@@ -154,12 +176,16 @@ function libDate_AbbrevSystemDate pYear,pMonth,pDay,pAddLeadingZeros
 end libDate_AbbrevSystemDate
 
 function libDate_ShortEnglishDate pYear,pMonth,pDay
+   #example:
+   # libDate_ShortEnglishDate(2013,12,15) = "12/15/13"
    local tDateFormatted
    put the short english dateFormat into tDateFormatted
    return libDate_replaceFormatEnglish(pYear,pMonth,pDay,tDateFormatted)
 end libDate_ShortEnglishDate
 
 function libDate_LongEnglishDate pYear,pMonth,pDay,pAddLeadingZeros
+   #example:
+   #libDate_LongEnglishDate(2013,12,1) = "Sunday, December 01, 2013"
    local tDateFormatted
    put the long english dateFormat into tDateFormatted
    if pAddLeadingZeros then
@@ -171,6 +197,8 @@ function libDate_LongEnglishDate pYear,pMonth,pDay,pAddLeadingZeros
 end libDate_LongEnglishDate
 
 function libDate_EnglishDate pYear,pMonth,pDay,pAddLeadingZeros
+   #returns date in format  mm/dd/yy
+   #if pAddLeadingZeros is true, the date format is mm/dd/yyyy
    local tDateFormatted
    put the english dateFormat into tDateFormatted
    if pAddLeadingZeros then
@@ -182,6 +210,7 @@ function libDate_EnglishDate pYear,pMonth,pDay,pAddLeadingZeros
 end libDate_EnglishDate
 
 function libDate_AbbrevEnglishDate pYear,pMonth,pDay,pAddLeadingZeros
+   #returns "Sat, Dec 12, 2015"
    local tDateFormatted
    put the abbrev english dateFormat into tDateFormatted
    if pAddLeadingZeros then
@@ -193,6 +222,8 @@ function libDate_AbbrevEnglishDate pYear,pMonth,pDay,pAddLeadingZeros
 end libDate_AbbrevEnglishDate
 
 function libDate_replaceFormatSystem pYear,pMonth,pDay,pDateFormatted
+   #example:
+   # libDate_replaceFormatSystem(2015,12,25,"%d-%m-%Y") = "25-12-2015"
    if sSystemMonthNames[1] is empty then
       libDate_initSystemNames
    end if
@@ -235,6 +266,7 @@ function libDate_replaceFormatSystem pYear,pMonth,pDay,pDateFormatted
 end libDate_replaceFormatSystem
 
 function libDate_replaceFormatEnglish
+   #Change the dateformat to "%d/%m/%Y"
    local tParams
    local tYear,tMonth,tDay,tDateformat
    repeat with i=1 to paramCount()
@@ -243,8 +275,7 @@ function libDate_replaceFormatEnglish
    put item 1 of tParams into tYear
    put item 2 of tParams into tMonth
    put item 3 of tParams into tDay
-   put item 4 to -1 of tParams into tDateformat
-   
+   put item 4 to -1 of tParams into tDateformat   
    if sEnglishMonthNames[1] is empty then
       libDate_initEnglishNames
    end if
@@ -287,6 +318,9 @@ function libDate_replaceFormatEnglish
 end libDate_replaceFormatEnglish
 
 function libDate_LongFormat pYear,pMonth,pDay,pLanguage
+   #depending on language
+   #example:
+   #  libDate_LongFormat(2013,12,1,"IT") = "Dom., 1 Dicembre 2013"
    local tReplace
    if sLibdateMonthNames[pLanguage] is empty then
       libDate_initNamesAndFormats
@@ -334,6 +368,8 @@ function libDate_LongFormat pYear,pMonth,pDay,pLanguage
 end libDate_LongFormat
 
 function libDate_AbbrevFormat pYear,pMonth,pDay,pLanguage
+   #example:  put libDate_AbbrevFormat(2015,12,12,"IT")
+   #returns:  "Sab., 12/Dic./2015"
    local tReplace
    if sLibdateMonthNames[pLanguage] is empty then
       libDate_initNamesAndFormats
@@ -381,6 +417,9 @@ function libDate_AbbrevFormat pYear,pMonth,pDay,pLanguage
 end libDate_AbbrevFormat
 
 function libDate_shortFormat pYear,pMonth,pDay,pLanguage
+   #depends on language
+   #example:
+   # libDate_shortFormat(2015,12,25,"IT") = "25.12.15"
    local tReplace
    if sLibdateMonthNames[pLanguage] is empty then
       libDate_initNamesAndFormats
@@ -428,6 +467,11 @@ function libDate_shortFormat pYear,pMonth,pDay,pLanguage
 end libDate_shortFormat
 
 function libDate_dayOfWeek pYear,pMonth,pDay
+   #returns the number of the day (0-6) of the week
+   #Sunday is 0
+   #Monday is 1
+   #Tuesday is 2
+   #...
    local tMonthNum,tDayNum,tYearNum,tCenturyNum,tCentury,tWeekDay,tYear
    add 0 to pMonth
    put pDay mod 7 into tDayNum
@@ -465,6 +509,7 @@ function libDate_dayOfWeek pYear,pMonth,pDay
 end libDate_dayOfWeek
 
 function libDate_isLeapYear pYear
+   #returns true if the supplied year is a leap year
    if pYear<100 then
       -- current century
       put char 1 to 2 of word -1 of the long  english date before pYear
@@ -477,6 +522,7 @@ function libDate_isLeapYear pYear
 end libDate_isLeapYear
 
 on libDate_initSystemNames
+   #internal
    -- just here to speed stuff up
    local tCounter
    
@@ -506,6 +552,7 @@ on libDate_initSystemNames
 end libDate_initSystemNames
 
 on libDate_initEnglishNames
+   #internal
    -- just here to speed stuff up
    local tCounter
    
@@ -535,6 +582,8 @@ on libDate_initEnglishNames
 end libDate_initEnglishNames
 
 function libDate_DaysInMonth pYear,pMonth
+   #returns the number of days of the supplied month, 
+   #you must forurnish also year, because of leap years
    switch pMonth
       case 4
       case 6
@@ -556,6 +605,11 @@ function libDate_DaysInMonth pYear,pMonth
 end libDate_DaysInMonth
 
 function libDate_DayofYear pYear,pMonth,pDay
+   #returns the number of the repect the year
+   #examples:
+   # libDate_DayofYear(2016,1,1) = 1
+   # libDate_DayofYear(2016,2,3) = 34
+   # libDate_DayofYear(2016,12,31) = 366  , because 2016 is leap year
    local tDayOfYear
    repeat with i=1 to pMonth - 1
       add libDate_DaysInMonth(pYear,i) to tDayOfYear
@@ -565,6 +619,8 @@ function libDate_DayofYear pYear,pMonth,pDay
 end libDate_DayofYear
 
 function libDate_CalendarWeekISO pYear,pMonth,pDay
+   #example:
+   # libDate_CalendarWeekISO(2012,12,12) = "2012 - 50"
    local tWeek,tJan1St,tDaysPassed,tPrevious
    put libDate_DayOfWeek(pYear,1,1) - 1  into tJan1St -- offset for monday = 0
    if tJan1St<0 then put 6 into tJan1St
@@ -601,6 +657,7 @@ function libDate_CalendarWeekISO pYear,pMonth,pDay
 end libDate_CalendarWeekISO
 
 function libDate_DaysOfCalendarWeekISO pYear,pWeek
+   #returns a list of dates (one per line) of the dates of the supplied week
    local tJan4th,tFirstMonday,tMonday,tReturn
    -- the 4th of January is ALWAYS in ISOWeek 1
    -- need to find first monday in a year
@@ -617,17 +674,21 @@ function libDate_DaysOfCalendarWeekISO pYear,pWeek
 end libDate_DaysOfCalendarWeekISO
 
 function libDate_DaysBetween pYear1,pMonth1,pDay1,pYear2,pMonth2,pDay2
+   #returns the neumber of days between two dates
    return libDate_DayNumber(pYear2,pMonth2,pDay2) - libDate_DayNumber(pYear1,pMonth1,pDay1)
 end libDate_DaysBetween
 
 function libDate_DateInDaysFrom pYear,pMonth,pDay,pDays
+   #return the new date adding pdays
+   #example:
+   # libDate_DateInDaysFrom(2012,12,12,5) = "2012,12,17"
    return libDate_dateFromNumber(libDate_DayNumber(pYear,pMonth,pDay)+pDays)
 end libDate_DateInDaysFrom
 
 -- taken from http://alcor.concordia.ca/~gpkatch/gdate-algorithm.html
 
 function libDate_DayNumber pYear,pMonth,pDay
- #return number of days counting from year 0 AC/DC, useful for difference od days calculations
+ #from a date returns number of days counting from year 0 AC/DC, useful for difference or days calculations
  put  (pMonth + 9) mod 12 into pMonth
  put pYear - pMonth div 10 into pYear
  return 365*pYear + pYear div 4 - pYear div 100 + pYear div 400 + (pMonth*306 + 5) div 10 + ( pDay - 1 )
@@ -635,6 +696,8 @@ end libDate_DayNumber
 
 function libDate_dateFromNumber pNumber
    #return date from day number starting from 0 year AC/DC
+   #example: 
+   # libDate_dateFromNumber(702527) = "1923,8,15"
    local tYear,tMonth,tDay,tDays,tMonths
    put (10000*pNumber + 14780) div 3652425 into tYear
    put pNumber - (365*tYear + tYear div 4 - tYear div 100 + tYear div 400) into tDays
@@ -650,10 +713,15 @@ function libDate_dateFromNumber pNumber
 end libDate_dateFromNumber
 
 function libDate_DayOffset pYear,pMonth,pDay,pOffsetInDays
+   #return date adding pOffsetDays days
+   #example:
+   # libDate_DayOffset(2012,10,25,10) = "2012,11,4"
    return libDate_DateFromNumber(libDate_DayNumber(pYear,pMonth,pDay+pOffsetInDays))
 end libDate_DayOffset
 
 function libDate_dateFromFormat pFormatString,pFormattedString
+   #example:
+   #libDate_dateFromFormat("%y-%m-%d","2015-11-22") = "2015,11,22"
    local tTokens,tYear,tMonth,tDay
    put libDate_findTokens(pFormatString,pFormattedString) into tTokens
    repeat for each key theToken in tTokens
@@ -703,7 +771,7 @@ function libDate_dateFromFormat pFormatString,pFormattedString
 end libDate_dateFromFormat
 
 function libDate_findTokens pString,pString2
-   
+   #internal function
    local tOffsets,tCounter,tToken,tTokens,tSort,tResult
    
    repeat for each char theChar in pString
@@ -765,6 +833,8 @@ end libDate_findTokens
 -- contribution by Mats Wilstrand
 
 function libDate_today
+   #example:
+   # libDate_today() = "2016,02,23"
    local tDate
    put the english date into tDate
    replace slash with comma in tDate
@@ -778,7 +848,25 @@ end libDate_Today
 
 function libDate_dateFromSeconds  tSeconds
    #return date from the seconds (UNIX timestamp)
+   #example:
+   #libDate_dateFromSeconds(1445495654) = "2015,10,22"
    put  floor(((tSeconds / 60) / 60 ) / 24) into tDays #days from 1970/1/1   
    put libDate_DayNumber(1970,1,1) + tDays into tDays   
    return libDate_dateFromNumber(tDays)   
 end libDate_dateFromSeconds
+
+function libdate_TimeFromSeconds  tSeconds
+   #return the time from the seconds (UNIX timestamp).
+   #hours are in 24 hours format
+   #example:
+   #libDate_dateFromSeconds(1445495654) = "7:34:14"
+   #
+   #we know the current time zone
+   put (the last word of the internet date ) / 100 into tZone
+   put tSeconds mod (86400 ) into myTime # 86400 = 24 *60 *60
+   put floor(myTime / 3600) into tHours  # 3600 = 60 * 60
+   add tZone to tHours #we must correct time depending on our time zone
+   put floor( ( myTime mod 3600 ) / 60)  into tMinutes  # 3600 = 60 * 60
+   put (myTime mod 3600 ) mod 60  into tSeconds  # 3600 = 60 * 60
+   return tHours &":"& tMinutes &":"& tSeconds
+end libdate_TimeFromSeconds
