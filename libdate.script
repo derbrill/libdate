@@ -605,7 +605,7 @@ function libDate_DaysInMonth pYear,pMonth
 end libDate_DaysInMonth
 
 function libDate_DayofYear pYear,pMonth,pDay
-   #returns the number of the repect the year
+   #returns the number of the day, the respect the year
    #examples:
    # libDate_DayofYear(2016,1,1) = 1
    # libDate_DayofYear(2016,2,3) = 34
