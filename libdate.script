@@ -870,3 +870,13 @@ function libdate_TimeFromSeconds  tSeconds
    put (myTime mod 3600 ) mod 60  into tSeconds  # 3600 = 60 * 60
    return tHours &":"& tMinutes &":"& tSeconds
 end libdate_TimeFromSeconds
+
+function libDate_addMonths  pyear,pmonth,pday,pMonths
+   #Add (or subract) months to date
+   #libDate_addMonths (2017,4,5,13) = 2018,5,5
+   put pyear,pmonth,pday,0,0,0,0 into temp
+   add pMonths to item 2 of temp
+   convert temp to date
+   convert temp to dateitems
+   return (item 1 to 3 of temp)
+end libDate_addMonths
