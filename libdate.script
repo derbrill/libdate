@@ -880,3 +880,28 @@ function libDate_addMonths  pyear,pmonth,pday,pMonths
    convert temp to dateitems
    return (item 1 to 3 of temp)
 end libDate_addMonths
+
+function libdate_addMinutes  pTime, pMinutes
+   #Usage: libdate_addminutes("18:35",37) = "19:12"
+   #pTime format  = "13:15" or 13:15:59"
+   #pminutes is a integer positive or negative
+   set  itemdel to ":"
+   put item 1 of ptime into tOre
+   put item 2 of ptime into tMinuti
+   put item 3 of ptime into tSecondi
+   put tMinuti + pMinutes into tMinuti
+   if pMinutes > 0 then 
+      put tOre + floor(tMinuti / 60) into tOre
+   else 
+      put tOre - floor(tMinuti / 60) into tOre
+   end if
+   put   tMinuti mod 60  into tMinuti
+   put tOre mod 24 into tOre
+   if the number of chars of tMinuti is 1 then put 0 before tMinuti
+   if the number of chars of tOre is 1 then put 0 before tOre
+   if tSecondi is empty then
+      return (tOre & ":" & tMinuti  )
+   else
+      return (tOre & ":" & tMinuti & ":" & tSecondi )
+   end if
+end libdate_addminutes
