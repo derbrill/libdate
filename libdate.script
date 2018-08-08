@@ -982,3 +982,15 @@ function libdate_MonthName tMonth,pLanguage
    end if   
    return line tMonth of sLibdateMonthNames[pLanguage]
 end libdate_MonthName
+
+function libdate_AbbrevWeekdayName tDay, pLanguage
+   #example: put libdate_AbbrevWeekdayName(1,"IT")
+   #return:  "Dom."
+   if sLibDateAbbrevWeekdayNames[pLanguage] is empty then
+      libDate_initNamesAndFormats
+   end if
+   if sLibDateAbbrevWeekdayNames[pLanguage] is empty then
+      return "libDateError: Unknown language"
+   end if     
+   return line tDay of sLibDateAbbrevWeekdayNames[pLanguage]
+end libdate_AbbrevWeekdayName
