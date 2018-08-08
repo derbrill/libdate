@@ -970,3 +970,15 @@ function libdate_CurrentMonthName pLanguage
    put item 2 of libDate_today() into curMonth
    return line curMonth of sLibdateMonthNames[pLanguage]
 end libdate_CurrentMonthName
+
+function libdate_MonthName tMonth,pLanguage
+   #example: put libdate_CurrentMonthName(1,"IT")
+   #returns: "Gennaio"
+   if sLibdateMonthNames[pLanguage] is empty then
+      libDate_initNamesAndFormats
+   end if
+   if sLibdateMonthNames[pLanguage] is empty then
+      return "libDateError: Unknown language"
+   end if   
+   return line tMonth of sLibdateMonthNames[pLanguage]
+end libdate_MonthName
