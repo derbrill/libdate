@@ -74,7 +74,7 @@ on libDate_initNamesAndFormats
    put "%a, %d/%b/%Y" into sLibDateAbbrevFormats["FR"]
    put "Janvier" & cr & "Février" & cr & "Mars" & cr & "Avril" & cr & "Mai" & cr & "Juin" & cr & "Juillet" & cr & "Août" & cr & "Septembre" & cr & "Octobre" & cr & "Novembre" & cr & "Décembre" into sLibDateMonthNames["FR"]
    put "Jan." & cr & "Fev." & cr & "Mar." & cr & "Avr." & cr & "Mai" & cr & "Juin" & cr & "Juil." & cr & "Aoû." & cr & "Sep." & cr & "Oct." & cr & "Nov." & cr & "Déc." into sLibDateAbbrevMonthNames["FR"]
-   put "Dimanche" & cr & "Lundì" & cr & "Mars" & cr & "Mercredi" & cr & "Jeudi" & cr & "Vendredi" & cr & "Samedi" into sLibDateWeekdayNames["FR"]
+   put "Dimanche" & cr & "Lundi" & cr & "Mardi" & cr & "Mercredi" & cr & "Jeudi" & cr & "Vendredi" & cr & "Samedi" into sLibDateWeekdayNames["FR"]
    put "Dim." & cr & "Lun." & cr & "Mar." & cr & "Mer." & cr & "Jeu." & cr & "Ven." & cr & "Sam." into sLibDateAbbrevWeekdayNames["FR"]
    
 end libDate_initNamesAndFormats
