@@ -17,4 +17,4 @@ On the contrary this is **correct**:
 
 ## Installation
 
-Copy the the content of **libdate.script** from in stack script of your program
+You can either copy the content of **libdate.livecodescript** to your stack, or use it as a script only library (see start using in LC Dict)
