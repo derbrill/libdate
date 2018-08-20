@@ -68,6 +68,16 @@ on libDate_initNamesAndFormats
    put "Domenica" & cr & "Lunedì" & cr & "Martedì" & cr & "Mercoledì" & cr & "Giovedì" & cr & "Venerdì" & cr & "Sabato" into sLibDateWeekdayNames["IT"]
    put "Dom." & cr & "Lun." & cr & "Mar." & cr & "Mer." & cr & "Gio." & cr & "Ven." & cr & "Sab."  into sLibDateAbbrevWeekdayNames["IT"]
    
+   --French
+   put "Français" into sLibDateLanguages["FR"]
+   put "%d.%m.%y" into sLibDateFormats["FR"]
+   put "%A, %d %B %Y" into sLibDateLongFormats["FR"]
+   put "%a, %d/%b/%Y" into sLibDateAbbrevFormats["FR"]
+   put "Janvier" & cr & "Février" & cr & "Mars" & cr & "Avril" & cr & "Mai" & cr & "Juin" & cr & "Juillet" & cr & "Août" & cr & "Septembre" & cr & "Octobre" & cr & "Novembre" & cr & "Décembre" into sLibDateMonthNames["FR"]
+   put "Jan." & cr & "Fev." & cr & "Mar." & cr & "Avr." & cr & "Mai" & cr & "Juin" & cr & "Juil." & cr & "Aoû." & cr & "Sep." & cr & "Oct." & cr & "Nov." & cr & "Déc." into sLibDateAbbrevMonthNames["FR"]
+   put "Dimanche" & cr & "Lundi" & cr & "Mardi" & cr & "Mercredi" & cr & "Jeudi" & cr & "Vendredi" & cr & "Samedi" into sLibDateWeekdayNames["FR"]
+   put "Dim." & cr & "Lun." & cr & "Mar." & cr & "Mer." & cr & "Jeu." & cr & "Ven." & cr & "Sam." into sLibDateAbbrevWeekdayNames["FR"]
+   
 end libDate_initNamesAndFormats
 
 on libDate_reset
@@ -168,7 +178,7 @@ function libDate_AbbrevSystemDate pYear,pMonth,pDay,pAddLeadingZeros
    #on windows italian returns:  "mer 12 dic 2012"
    local tDateFormatted
    put the abbrev system dateFormat into tDateFormatted
-    if pAddLeadingZeros then
+   if pAddLeadingZeros then
       replace "%d" with "%#d" in tDateFormatted
       replace "%m" with "%#m" in tDateFormatted
       replace "%y" with "%Y" in tDateFormatted
@@ -689,10 +699,10 @@ end libDate_DateInDaysFrom
 -- taken from http://alcor.concordia.ca/~gpkatch/gdate-algorithm.html
 
 function libDate_DayNumber pYear,pMonth,pDay
- #from a date returns number of days counting from year 0 AC/DC, useful for difference or days calculations
- put  (pMonth + 9) mod 12 into pMonth
- put pYear - pMonth div 10 into pYear
- return 365*pYear + pYear div 4 - pYear div 100 + pYear div 400 + (pMonth*306 + 5) div 10 + ( pDay - 1 )
+   #from a date returns number of days counting from year 0 AC/DC, useful for difference or days calculations
+   put  (pMonth + 9) mod 12 into pMonth
+   put pYear - pMonth div 10 into pYear
+   return 365*pYear + pYear div 4 - pYear div 100 + pYear div 400 + (pMonth*306 + 5) div 10 + ( pDay - 1 )
 end libDate_DayNumber
 
 function libDate_dateFromNumber pNumber
@@ -906,3 +916,92 @@ function libdate_addMinutes  pTime, pMinutes
       return (tOre & ":" & tMinuti & ":" & tSecondi )
    end if
 end libdate_addminutes
+
+function libdate_Easter pYear
+   /* 
+   Syntax:
+   libdate_Easter(pYear) 
+   
+   Examples:
+   libdate_Easter() = 2018,4,1
+   libdate_Easter(2000) = 2000,4,23
+   libdate_Easter(1599) = 1599,4,18
+   
+   Description:
+   This funcion calculates the date of Easter for a given year.
+   
+   If no year is specified, the current year is used.
+   
+   It cannot calculate Easter for years before 1583, so will return error for any 
+   years earlier than that.   
+   Source: 
+   Sarah Reichelt, http://www.troz.net/rev/stacks/DateTime.rev
+   dateOfEaster */
+   
+   
+   if pYear is empty or pYear is not a number then
+      put the seconds into tNow
+      convert tNow to dateItems
+      put item 1 of tNow into pYear
+   end if
+   
+   if pYear < 1583 then return "Error: date before 1583"
+   
+   put 0 into wCorrection
+   if ( pYear < 1700 ) then put 4 into wCorrection
+   else if pYear < 1800 then put 5 into wCorrection
+   else if pYear < 1900 then put 6 into wCorrection
+   else if pYear < 2100 then put 0 into wCorrection
+   else if pYear < 2200 then put 1 into wCorrection
+   else if pYear < 2300 then put 2 into wCorrection
+   else if pYear < 2500 then put 3 into wCorrection
+   
+   put (19 * (pYear mod 19) + 24) mod 30 into wDay
+   put 22 + wDay + ((2 * (pYear mod 4) + 4 * (pYear mod 7) + 6 * wDay + 5 + wCorrection) mod 7) into wDay
+   
+   -- jump to next month
+   if wDay > 31 then
+      put 4 into wMonth
+      subtract 31 from wDay
+   else
+      put 3 into wMonth
+   end if
+   return (pYear & comma & wMonth &comma & wDay)   
+end libdate_Easter 
+
+function libdate_CurrentMonthName pLanguage
+   #example: put libdate_CurrentMonthName("IT")
+   #returns: "Gennaio"
+   if sLibdateMonthNames[pLanguage] is empty then
+      libDate_initNamesAndFormats
+   end if
+   if sLibdateMonthNames[pLanguage] is empty then
+      return "libDateError: Unknown language"
+   end if
+   put item 2 of libDate_today() into curMonth
+   return line curMonth of sLibdateMonthNames[pLanguage]
+end libdate_CurrentMonthName
+
+function libdate_MonthName tMonth,pLanguage
+   #example: put libdate_CurrentMonthName(1,"IT")
+   #returns: "Gennaio"
+   if sLibdateMonthNames[pLanguage] is empty then
+      libDate_initNamesAndFormats
+   end if
+   if sLibdateMonthNames[pLanguage] is empty then
+      return "libDateError: Unknown language"
+   end if   
+   return line tMonth of sLibdateMonthNames[pLanguage]
+end libdate_MonthName
+
+function libdate_AbbrevWeekdayName tDay, pLanguage
+   #example: put libdate_AbbrevWeekdayName(1,"IT")
+   #return:  "Dom."
+   if sLibDateAbbrevWeekdayNames[pLanguage] is empty then
+      libDate_initNamesAndFormats
+   end if
+   if sLibDateAbbrevWeekdayNames[pLanguage] is empty then
+      return "libDateError: Unknown language"
+   end if     
+   return line tDay of sLibDateAbbrevWeekdayNames[pLanguage]
+end libdate_AbbrevWeekdayName
