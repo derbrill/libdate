@@ -67,6 +67,16 @@ on libDate_initNamesAndFormats
    put "Domenica" & cr & "Lunedì" & cr & "Martedì" & cr & "Mercoledì" & cr & "Giovedì" & cr & "Venerdì" & cr & "Sabato" into sLibDateWeekdayNames["IT"]
    put "Dom." & cr & "Lun." & cr & "Mar." & cr & "Mer." & cr & "Gio." & cr & "Ven." & cr & "Sab."  into sLibDateAbbrevWeekdayNames["IT"]
    
+   --French
+   put "Français" into sLibDateLanguages["FR"]
+   put "%d.%m.%y" into sLibDateFormats["FR"]
+   put "%A, %d %B %Y" into sLibDateLongFormats["FR"]
+   put "%a, %d/%b/%Y" into sLibDateAbbrevFormats["FR"]
+   put "Janvier" & cr & "Février" & cr & "Mars" & cr & "Avril" & cr & "Mai" & cr & "Juin" & cr & "Juillet" & cr & "Août" & cr & "Septembre" & cr & "Octobre" & cr & "Novembre" & cr & "Décembre" into sLibDateMonthNames["FR"]
+   put "Jan." & cr & "Fev." & cr & "Mar." & cr & "Avr." & cr & "Mai" & cr & "Juin" & cr & "Juil." & cr & "Aoû." & cr & "Sep." & cr & "Oct." & cr & "Nov." & cr & "Déc." into sLibDateAbbrevMonthNames["FR"]
+   put "Dimanche" & cr & "Lundi" & cr & "Mardi" & cr & "Mercredi" & cr & "Jeudi" & cr & "Vendredi" & cr & "Samedi" into sLibDateWeekdayNames["FR"]
+   put "Dim." & cr & "Lun." & cr & "Mar." & cr & "Mer." & cr & "Jeu." & cr & "Ven." & cr & "Sam." into sLibDateAbbrevWeekdayNames["FR"]
+   
 end libDate_initNamesAndFormats
 
 on libDate_reset
@@ -957,3 +967,40 @@ function libdate_Easter pYear
    end if
    return (pYear & comma & wMonth &comma & wDay)   
 end libdate_Easter 
+
+function libdate_CurrentMonthName pLanguage
+   #example: put libdate_CurrentMonthName("IT")
+   #returns: "Gennaio"
+   if sLibdateMonthNames[pLanguage] is empty then
+      libDate_initNamesAndFormats
+   end if
+   if sLibdateMonthNames[pLanguage] is empty then
+      return "libDateError: Unknown language"
+   end if
+   put item 2 of libDate_today() into curMonth
+   return line curMonth of sLibdateMonthNames[pLanguage]
+end libdate_CurrentMonthName
+
+function libdate_MonthName tMonth,pLanguage
+   #example: put libdate_CurrentMonthName(1,"IT")
+   #returns: "Gennaio"
+   if sLibdateMonthNames[pLanguage] is empty then
+      libDate_initNamesAndFormats
+   end if
+   if sLibdateMonthNames[pLanguage] is empty then
+      return "libDateError: Unknown language"
+   end if   
+   return line tMonth of sLibdateMonthNames[pLanguage]
+end libdate_MonthName
+
+function libdate_AbbrevWeekdayName tDay, pLanguage
+   #example: put libdate_AbbrevWeekdayName(1,"IT")
+   #return:  "Dom."
+   if sLibDateAbbrevWeekdayNames[pLanguage] is empty then
+      libDate_initNamesAndFormats
+   end if
+   if sLibDateAbbrevWeekdayNames[pLanguage] is empty then
+      return "libDateError: Unknown language"
+   end if     
+   return line tDay of sLibDateAbbrevWeekdayNames[pLanguage]
+end libdate_AbbrevWeekdayName

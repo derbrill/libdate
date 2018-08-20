@@ -14,3 +14,7 @@ On the contrary this is **correct**:
 
     put 2010,1,1 into temp
     put  libDate_DayNumber(temp)
+
+## Installation
+
+Copy the the content of **libdate.script** from in stack script of your program
