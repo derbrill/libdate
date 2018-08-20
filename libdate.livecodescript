@@ -15,7 +15,7 @@ end libDate_listlangs
 
 -- monthnames and weekdaynames for different languages
 on libDate_initNamesAndFormats
-   #put here your language format
+   #put your language format here
    --USA
    put "American" into sLibDateLanguages["USA"]   
    put "%m/%d/%y" into sLibDateFormats["USA"]
@@ -80,7 +80,7 @@ on libDate_initNamesAndFormats
 end libDate_initNamesAndFormats
 
 on libDate_reset
-   #reset lenguage and format
+   #reset language and format
    local tClear
    put the localNames into tClear
    repeat for each item theItem in tClear
@@ -104,7 +104,7 @@ function libDate_AbbrevEnglishWeekdayName pYear,pMonth,pDay
 end libDate_AbbrevEnglishWeekdayName
 
 function libDate_AbbrevSystemWeekdayName pYear,pMonth,pDay
-   #depens on your system and language
+   #depends on your system and language
    #libDate_AbbrevSystemWeekdayName(2012,12,10)  = "mon"
    local tWeekday
    put libDate_DayOfWeek(pYear,pMonth,pDay) + 1 into tWeekDay
@@ -112,7 +112,7 @@ function libDate_AbbrevSystemWeekdayName pYear,pMonth,pDay
 end libDate_AbbrevSystemWeekdayName
 
 function libDate_EnglishWeekdayName pYear,pMonth,pDay
-   #returns the egnlish name of the supplied date
+   #returns the english name of the supplied date
    #example:
    #libDate_EnglishWeekdayName(2012,12,25) = "Tuesday"
    local tWeekday
