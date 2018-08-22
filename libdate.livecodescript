@@ -869,15 +869,20 @@ function libdate_TimeFromSeconds  tSeconds
    #return the time from the seconds (UNIX timestamp).
    #hours are in 24 hours format
    #example:
-   #libDate_dateFromSeconds(1445495654) = "7:34:14"
+   #libDate_timeFromSeconds(1445495654) = "07:34:14"
    #
    #we know the current time zone
    put (the last word of the internet date ) / 100 into tZone
    put tSeconds mod (86400 ) into myTime # 86400 = 24 *60 *60
    put floor(myTime / 3600) into tHours  # 3600 = 60 * 60
    add tZone to tHours #we must correct time depending on our time zone
+   if thours > 24 then put thours - 24 into tHours #correcting add/subtract timezone
+   if thours < 0 then put thours + 24 into tHours #correcting add/subtract timezone
+   if thours < 9 then put "0" before thours  #correcting format
    put floor( ( myTime mod 3600 ) / 60)  into tMinutes  # 3600 = 60 * 60
+   if tMinutes < 9 then put "0" before tMinutes  #correcting format
    put (myTime mod 3600 ) mod 60  into tSeconds  # 3600 = 60 * 60
+   if tSeconds < 9 then put "0" before tSeconds  #correcting format
    return tHours &":"& tMinutes &":"& tSeconds
 end libdate_TimeFromSeconds
 
