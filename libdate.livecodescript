@@ -76,6 +76,26 @@ on libDate_initNamesAndFormats
    put "Jan." & cr & "Fev." & cr & "Mar." & cr & "Avr." & cr & "Mai" & cr & "Juin" & cr & "Juil." & cr & "Aoû." & cr & "Sep." & cr & "Oct." & cr & "Nov." & cr & "Déc." into sLibDateAbbrevMonthNames["FR"]
    put "Dimanche" & cr & "Lundi" & cr & "Mardi" & cr & "Mercredi" & cr & "Jeudi" & cr & "Vendredi" & cr & "Samedi" into sLibDateWeekdayNames["FR"]
    put "Dim." & cr & "Lun." & cr & "Mar." & cr & "Mer." & cr & "Jeu." & cr & "Ven." & cr & "Sam." into sLibDateAbbrevWeekdayNames["FR"]
+      
+   -- Español
+   put "Español" into sLibDateLanguages["ES"]
+   put "%d.%m.%y" into sLibDateFormats["ES"]
+   put "%A, %d %B %Y" into sLibDateLongFormats["ES"]
+   put "%a, %d/%b/%Y" into sLibDateAbbrevFormats["ES"]
+   put "enero" & cr & "febrero" & cr & "marzo" & cr & "abril" & cr & "mayo" & cr & "junio" & cr & "julio" & cr & "agosto" & cr & "septiembre" & cr & "octubre" & cr & "noviembre" & cr & "diciembre" into sLibDateMonthNames["ES"]
+   put "en" & cr & "feb" & cr & "mar" & cr & "abr" & cr & "may" & cr & "jun" & cr & "jul" & cr & "ag" & cr & "sept" & cr & "oct" & cr & "nov" & cr & "dic" into sLibDateAbbrevMonthNames["ES"]
+   put "domingo" & cr & "lunes" & cr & "martes" & cr & "miércoles" & cr & "jueves" & cr & "viernes" & cr & "sábado" into sLibDateWeekdayNames["ES"]
+   put "dom" & cr & "lun" & cr & "mar" & cr & "mié" & cr & "jue" & cr & "vie" & cr & "sáb"  into sLibDateAbbrevWeekdayNames["ES"]
+   
+   -- Català
+   put "Català" into sLibDateLanguages["CA"]
+   put "%d.%m.%y" into sLibDateFormats["CA"]
+   put "%A, %d %B %Y" into sLibDateLongFormats["CA"]
+   put "%a, %d/%b/%Y" into sLibDateAbbrevFormats["CA"]
+   put "gener" & cr & "febrer" & cr & "març" & cr & "abril" & cr & "maig" & cr & "juny" & cr & "juliol" & cr & "agost" & cr & "setembre" & cr & "octubre" & cr & "novembre" & cr & "desembre" into sLibDateMonthNames["CA"]
+   put "gen." & cr & "febr." & cr & "març" & cr & "abr." & cr & "maig" & cr & "juny" & cr & "jul." & cr & "ag." & cr & "set." & cr & "oct." & cr & "nov." & cr & "des." into sLibDateAbbrevMonthNames["CA"]
+   put "diumenge" & cr & "dilluns" & cr & "dimarts" & cr & "dimecres" & cr & "dijous" & cr & "divendres" & cr & "dissabte" into sLibDateWeekdayNames["CA"]
+   put "dg." & cr & "dl." & cr & "dm." & cr & "dc." & cr & "dj." & cr & "dv." & cr & "ds."  into sLibDateAbbrevWeekdayNames["CA"]
    
 end libDate_initNamesAndFormats
 
@@ -869,15 +889,20 @@ function libdate_TimeFromSeconds  tSeconds
    #return the time from the seconds (UNIX timestamp).
    #hours are in 24 hours format
    #example:
-   #libDate_dateFromSeconds(1445495654) = "7:34:14"
+   #libDate_timeFromSeconds(1445495654) = "07:34:14"
    #
    #we know the current time zone
    put (the last word of the internet date ) / 100 into tZone
    put tSeconds mod (86400 ) into myTime # 86400 = 24 *60 *60
    put floor(myTime / 3600) into tHours  # 3600 = 60 * 60
    add tZone to tHours #we must correct time depending on our time zone
+   if thours >= 24 then put thours - 24 into tHours #correcting add/subtract timezone
+   if thours < 0 then put thours + 24 into tHours #correcting add/subtract timezone
+   if thours <= 9 then put "0" before thours  #correcting format
    put floor( ( myTime mod 3600 ) / 60)  into tMinutes  # 3600 = 60 * 60
+   if tMinutes <= 9 then put "0" before tMinutes  #correcting format
    put (myTime mod 3600 ) mod 60  into tSeconds  # 3600 = 60 * 60
+   if tSeconds <= 9 then put "0" before tSeconds  #correcting format
    return tHours &":"& tMinutes &":"& tSeconds
 end libdate_TimeFromSeconds
 
